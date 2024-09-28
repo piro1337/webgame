@@ -20,6 +20,16 @@ var up = false;
 var down = false;
 var canvasMode = 0;
 var score = 0;
+var enemyBulletX = [-50,-50,-50];
+var enemyBulletY = [-50,-50,-50];
+var bulletSpeedX = new Array(3);
+var bulletSpeedY = new Array(3);
+var bullet = false;
+var bulletsplit = false;
+var cnt = -1;
+
+// var kariX = (playerX-enemyBulletX[0])/100.0;
+// var kariY = (playerY-enemyBulletY[0])/100.0;
 
 document.addEventListener("keydown",downhandler,false);
 document.addEventListener("keyup",uphandler,false);
@@ -86,6 +96,25 @@ function timertask(){
 	if(enemy2Y+enemySize>=cv.height||enemy2Y<=0){
 		enemy2MoveY = -enemy2MoveY
 	}
+	if(bulletsplit){
+		cnt++;
+		enemyBulletX[cnt] = enemy1X;
+		enemyBulletY[cnt] = enemy1Y;
+		bulletSpeedX[cnt] = (playerX-enemyBulletX[cnt])/100.0;
+		bulletSpeedY[cnt] = (playerY-enemyBulletY[cnt])/100.0;
+		bulletsplit = false;
+	}
+	if(bullet){
+		for(let i=0; i<cnt+1; i++){
+			enemyBulletX[i]+=bulletSpeedX[i];
+			enemyBulletY[i]+=bulletSpeedY[i];
+		}
+		if(cnt==2&&(enemyBulletX[2]>=cv.width+50||enemyBulletX[2]<=-50||enemyBulletY[2]>=cv.height+50||enemyBulletY[2]<=-50)){
+			bullet = false;
+			cnt = -1;
+			alert(1);
+		}
+	}
 	if(judge()){
 		canvasMode = 2;
 		clearInterval(timer);
@@ -119,6 +148,12 @@ function scoreTimerTask(){
 		}else{
 			enemy2MoveY-=0.5;
 		}
+		bullet = true;
+		bulletsplit = true;
+	}else if(score%110==0){
+		bulletsplit = true;
+	}else if(score%120==0){
+		bulletsplit = true;
 	}
 }
 ct2.font ="45px serif";
@@ -134,6 +169,9 @@ function drawCanvas(){
 		ct.fillStyle = "#FF0000"
 		ct.fillRect(enemy1X,enemy1Y,enemySize,enemySize);
 		ct.fillRect(enemy2X,enemy2Y,enemySize,enemySize);
+		for(let i=0; i<3; i++){
+			ct.fillRect(enemyBulletX[i],enemyBulletY[i],20,20)
+		}
 		ct2.fillText("SCORE:"+score,10,45);
 	}else if(canvasMode==2){
 		ct.fillStyle = "#000000";
