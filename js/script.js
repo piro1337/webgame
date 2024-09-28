@@ -112,7 +112,6 @@ function timertask(){
 		if(cnt==2&&(enemyBulletX[2]>=cv.width+50||enemyBulletX[2]<=-50||enemyBulletY[2]>=cv.height+50||enemyBulletY[2]<=-50)){
 			bullet = false;
 			cnt = -1;
-			alert(1);
 		}
 	}
 	if(judge()){
