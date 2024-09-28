@@ -27,6 +27,7 @@ var bulletSpeedY = new Array(3);
 var bullet = false;
 var bulletsplit = false;
 var cnt = -1;
+var bulletcnt = 0;
 
 // var kariX = (playerX-enemyBulletX[0])/100.0;
 // var kariY = (playerY-enemyBulletY[0])/100.0;
@@ -148,11 +149,9 @@ function scoreTimerTask(){
 			enemy2MoveY-=0.5;
 		}
 		bullet = true;
-		bulletsplit = true;
-	}else if(score%110==0){
-		bulletsplit = true;
-	}else if(score%120==0){
-		bulletsplit = true;
+	}
+	if(bullet&&score%10==0&&cnt!=2){
+		bulletsplit=true;
 	}
 }
 ct2.font ="45px serif";
@@ -180,6 +179,11 @@ function drawCanvas(){
 }
 
 function judge(){
+	for(let i=0; i<3;i++){
+		if(playerX<enemyBulletX[i]+30&&playerX+playerSize>enemyBulletX[i]&&playerY<enemyBulletY[i]+30&&playerY+playerSize>enemyBulletY[i]){
+			return true;
+		}
+	}
 	if(playerX<enemy1X+enemySize&&playerX+playerSize>enemy1X&&playerY<enemy1Y+enemySize&&playerY+playerSize>enemy1Y){//enemy1の当たり判定
 		return true;
 	}else if(playerX<enemy2X+enemySize&&playerX+playerSize>enemy2X&&playerY<enemy2Y+enemySize&&playerY+playerSize>enemy2Y){//enemy2の当たり判定
