@@ -5,6 +5,8 @@ var ct2 = cv2.getContext("2d");
 var playerX = 600;
 var playerY = 400;
 var playerSize = 50;
+var playerMoveX = 2;
+var playerMoveY = 2;
 var enemy1X = 0;
 var enemy1Y = 0;
 var enemy1MoveX = 1.5;
@@ -18,6 +20,9 @@ var right = false;
 var left = false;
 var up = false;
 var down = false;
+var dash = false;
+var dashcnt = 0;
+var dashCoolTime = 0;
 var canvasMode = 0;
 var score = 0;
 var enemyBulletX = [-50,-50,-50];
@@ -52,6 +57,13 @@ function downhandler(e){
 	}else if(e.key == "Down" || e.key == "ArrowDown"){
 		down = true;
 	}
+	if(e.key == " "&&dashCoolTime==0){
+		dash = true;
+		playerMoveX = 10;
+		playerMoveY = 10;
+		dashcnt = 0;
+		dashCoolTime = 50;
+	}
 }
 
 function uphandler(e){
@@ -69,16 +81,24 @@ function uphandler(e){
 
 function timertask(){
 	if(left&&playerX>0){
-		playerX-=2;
+		playerX-=playerMoveX;
 	}
 	if(right&&playerX<cv.width-playerSize){
-		playerX+=2;
+		playerX+=playerMoveX;
 	}
 	if(up&&playerY>0){
-		playerY-=2;
+		playerY-=playerMoveY;
 	}
 	if(down&&playerY<cv.height-playerSize){
-		playerY+=2
+		playerY+=playerMoveY;
+	}
+	if(dash){
+		if(dashcnt >= 20){
+			dash = false;
+			playerMoveX = 2;
+			playerMoveY = 2;
+		}
+		dashcnt++;
 	}
 
 	enemy1X += enemy1MoveX;
@@ -153,6 +173,9 @@ function scoreTimerTask(){
 	if(bullet&&score%10==0&&cnt!=2){
 		bulletsplit=true;
 	}
+	if(dashCoolTime!=0){
+		dashCoolTime--;
+	}
 }
 ct2.font ="45px serif";
 function drawCanvas(){
@@ -160,10 +183,14 @@ function drawCanvas(){
 	ct2.clearRect(0,0,cv2.width,cv2.height);
 	if(canvasMode==0){
 		ct.font ="150px serif";
-		ct.fillText("PressEnter",300,300);
+		ct.fillText("Press Enter",300,300);
+		ct.font ="50px serif";
+		ct.fillText("↑↓←→ SPACE",300,500);
 	}else if(canvasMode==1){
-		ct.fillStyle = "#00FFFF";
+		ct.fillStyle = "#b0c4de";
 		ct.fillRect(playerX,playerY,playerSize,playerSize);
+		ct.fillStyle = "#0000FF";
+		ct.fillRect(playerX,playerY,playerSize,50-dashCoolTime);
 		ct.fillStyle = "#FF0000"
 		ct.fillRect(enemy1X,enemy1Y,enemySize,enemySize);
 		ct.fillRect(enemy2X,enemy2Y,enemySize,enemySize);
@@ -172,6 +199,7 @@ function drawCanvas(){
 		}
 		ct2.fillText("SCORE:"+score,10,45);
 	}else if(canvasMode==2){
+		ct.font ="150px serif";
 		ct.fillStyle = "#000000";
 		ct.fillText("score:"+score,300,300);
 	}
